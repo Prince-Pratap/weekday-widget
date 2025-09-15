@@ -8,6 +8,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -134,12 +135,20 @@ public class WeekDayWidget extends AppWidgetProvider {
             calendar.set(Calendar.MILLISECOND, 0);
             
             long nextMidnight = calendar.getTimeInMillis();
-            alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, nextMidnight, pendingIntent);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC, nextMidnight, pendingIntent);
+            } else {
+                alarmManager.setExact(AlarmManager.RTC, nextMidnight, pendingIntent);
+            }
             return;
         }
 
         long nextUpdate = SystemClock.elapsedRealtime() + updateInterval;
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, nextUpdate, pendingIntent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            alarmManager.setExactAndAllowWhileIdle(AlarmManager.ELAPSED_REALTIME, nextUpdate, pendingIntent);
+        } else {
+            alarmManager.setExact(AlarmManager.ELAPSED_REALTIME, nextUpdate, pendingIntent);
+        }
     }
 
     private void cancelUpdate(Context context, int appWidgetId) {

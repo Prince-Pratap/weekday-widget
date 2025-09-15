@@ -23,7 +23,6 @@
 ##############################################################################
 
 # Attempt to set APP_HOME
-
 # Resolve links: $0 may be a link
 app_path=$0
 
@@ -75,7 +74,6 @@ case "$( uname )" in                #(
 esac
 
 CLASSPATH=$APP_HOME/gradle/wrapper/gradle-wrapper.jar
-
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
@@ -185,8 +183,18 @@ fi
 # character that might be a shell metacharacter, then use eval to parse
 # them into the shell's argument list.
 
-cat <<- 'EOF' | sed -e 's/\([\\"]\)/\\\1/g' -e 's/^/set -- /' | xargs printf '%s\n' "$@" | sh
-	"$@"
-EOF
+for arg do
+    if
+        case $arg in                                #(
+          -*)   false ;;                            # don't mess with options #(
+          /?*)  t=${arg#/} t=/${t%%/*}              # looks like a POSIX filepath
+                [ -e "$t" ] ;;                      #(
+          *)    false ;;
+        esac
+    then
+        arg=$( printf '%s\n' "$arg" | sed "s/'/'\\\\''/g" )
+    fi
+    printf '%s\n' "$arg"
+done | xargs -r printf "set -- %s " | sh
 
-exec "$JAVA_HOME/bin/java" "$@"
+exec "$JAVACMD" "$@"
