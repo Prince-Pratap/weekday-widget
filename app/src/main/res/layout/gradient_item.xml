@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:orientation="vertical"
+    android:padding="4dp"
+    android:gravity="center">
+
+    <View
+        android:id="@+id/gradientPreview"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/pastel_gradient"
+        android:layout_marginBottom="4dp"/>
+
+    <TextView
+        android:id="@+id/gradientName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pastel"
+        android:textSize="10sp"
+        android:textColor="#2C3E50"
+        android:gravity="center"
+        android:maxLines="1"
+        android:ellipsize="end"/>
+
+</LinearLayout>

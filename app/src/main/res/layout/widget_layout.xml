@@ -1,5 +1,6 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="12dp"
@@ -7,8 +8,18 @@
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
+    <!-- Custom font bitmap (when system font forcing is bypassed) -->
+    <ImageView
         android:id="@+id/dayText"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="center"
+        android:adjustViewBounds="true"
+        android:visibility="visible" />
+
+    <!-- Fallback text view (when custom font fails) -->
+    <TextView
+        android:id="@+id/dayTextFallback"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/default_day"
@@ -21,5 +32,6 @@
         android:ellipsize="end"
         android:autoSizeTextType="uniform"
         android:autoSizeMinTextSize="12sp"
-        android:autoSizeMaxTextSize="24sp"/>
+        android:autoSizeMaxTextSize="24sp"
+        android:visibility="gone" />
 </RelativeLayout>
