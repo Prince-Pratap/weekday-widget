@@ -65,7 +65,7 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
             BoxDesignStyle boxStyle = getWidgetBoxStyle(context, appWidgetId);
             String formattedText = formatDateTime(format);
 
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_simple);
             views.setTextViewText(R.id.dayText, formattedText);
 
             // Apply box style if it's not the default
@@ -86,7 +86,7 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
         } catch (Exception e) {
             Log.e(TAG, "Error updating widget " + appWidgetId, e);
             // Fallback to default display
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_simple);
             views.setTextViewText(R.id.dayText, "Error");
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
