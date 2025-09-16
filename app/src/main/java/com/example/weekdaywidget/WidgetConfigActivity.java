@@ -22,10 +22,14 @@ public class WidgetConfigActivity extends AppCompatActivity {
     private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private ListView formatListView;
     private ListView boxStyleListView;
+    private ListView gradientListView;
+    private ListView fontListView;
     private Button saveButton;
     private Button cancelButton;
     private DateTimeFormat selectedFormat = DateTimeFormat.DAY_ONLY;
     private BoxDesignStyle selectedBoxStyle = BoxDesignStyle.ROUNDED_CORNERS;
+    private GradientStyle selectedGradient = GradientStyle.PASTEL_PINK;
+    private FontStyle selectedFont = FontStyle.DANCING_SCRIPT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +55,16 @@ public class WidgetConfigActivity extends AppCompatActivity {
         initViews();
         setupFormatList();
         setupBoxStyleList();
+        setupGradientList();
+        setupFontList();
         setupButtons();
     }
 
     private void initViews() {
         formatListView = findViewById(R.id.formatListView);
         boxStyleListView = findViewById(R.id.boxStyleListView);
+        gradientListView = findViewById(R.id.gradientListView);
+        fontListView = findViewById(R.id.fontListView);
         saveButton = findViewById(R.id.saveButton);
         cancelButton = findViewById(R.id.cancelButton);
     }
@@ -111,6 +119,52 @@ public class WidgetConfigActivity extends AppCompatActivity {
         boxStyleListView.setItemChecked(0, true);
     }
 
+    private void setupGradientList() {
+        List<String> gradientNames = new ArrayList<>();
+        
+        for (GradientStyle gradient : GradientStyle.values()) {
+            gradientNames.add(gradient.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+            android.R.layout.simple_list_item_single_choice, gradientNames);
+        gradientListView.setAdapter(adapter);
+        gradientListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        
+        gradientListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedGradient = GradientStyle.values()[position];
+            }
+        });
+        
+        // Select first item by default
+        gradientListView.setItemChecked(0, true);
+    }
+
+    private void setupFontList() {
+        List<String> fontNames = new ArrayList<>();
+        
+        for (FontStyle font : FontStyle.values()) {
+            fontNames.add(font.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+            android.R.layout.simple_list_item_single_choice, fontNames);
+        fontListView.setAdapter(adapter);
+        fontListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        
+        fontListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedFont = FontStyle.values()[position];
+            }
+        });
+        
+        // Select first item by default
+        fontListView.setItemChecked(0, true);
+    }
+
     private void setupButtons() {
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,9 +208,11 @@ public class WidgetConfigActivity extends AppCompatActivity {
     }
 
     private void saveConfiguration() {
-        // Save the selected format and box style
+        // Save all selected options
         WeekDayWidgetSimple.saveWidgetFormat(this, appWidgetId, selectedFormat);
         WeekDayWidgetSimple.saveWidgetBoxStyle(this, appWidgetId, selectedBoxStyle);
+        WeekDayWidgetSimple.saveWidgetGradient(this, appWidgetId, selectedGradient);
+        WeekDayWidgetSimple.saveWidgetFont(this, appWidgetId, selectedFont);
 
         // Update the widget
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);

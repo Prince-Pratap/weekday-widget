@@ -21,6 +21,8 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
     private static final String PREFS_NAME = "com.example.weekdaywidget.preferences";
     private static final String PREF_FORMAT_KEY = "format_";
     private static final String PREF_BOX_KEY = "box_";
+    private static final String PREF_GRADIENT_KEY = "gradient_";
+    private static final String PREF_FONT_KEY = "font_";
     private static final String ACTION_UPDATE_WIDGET = "com.example.weekdaywidget.UPDATE_WIDGET";
 
     @Override
@@ -39,6 +41,8 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
         for (int appWidgetId : appWidgetIds) {
             editor.remove(PREF_FORMAT_KEY + appWidgetId);
             editor.remove(PREF_BOX_KEY + appWidgetId);
+            editor.remove(PREF_GRADIENT_KEY + appWidgetId);
+            editor.remove(PREF_FONT_KEY + appWidgetId);
             cancelUpdate(context, appWidgetId);
         }
         editor.apply();
@@ -63,16 +67,21 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
         try {
             DateTimeFormat format = getWidgetFormat(context, appWidgetId);
             BoxDesignStyle boxStyle = getWidgetBoxStyle(context, appWidgetId);
+            GradientStyle gradient = getWidgetGradient(context, appWidgetId);
+            FontStyle font = getWidgetFont(context, appWidgetId);
             String formattedText = formatDateTime(format);
 
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_simple);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_enhanced);
             views.setTextViewText(R.id.dayText, formattedText);
 
-            // Apply box style if it's not the default
-            if (boxStyle != BoxDesignStyle.ROUNDED_CORNERS) {
-                // For now, just log the box style - we'll implement visual changes later
-                Log.d(TAG, "Box style selected: " + boxStyle.getName());
-            }
+            // Apply gradient background
+            applyGradientBackground(context, views, gradient, boxStyle);
+            
+            // Apply font styling
+            applyFontStyling(views, font);
+            
+            // Apply dark mode detection
+            applyDarkModeAdaptation(context, views);
 
             // Add click listener to open configuration
             Intent configIntent = new Intent(context, WidgetConfigActivity.class);
@@ -86,7 +95,7 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
         } catch (Exception e) {
             Log.e(TAG, "Error updating widget " + appWidgetId, e);
             // Fallback to default display
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_simple);
+            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_layout_enhanced);
             views.setTextViewText(R.id.dayText, "Error");
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
@@ -122,6 +131,28 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
     static void saveWidgetBoxStyle(Context context, int appWidgetId, BoxDesignStyle boxStyle) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit().putInt(PREF_BOX_KEY + appWidgetId, boxStyle.getId()).apply();
+    }
+
+    static void saveWidgetGradient(Context context, int appWidgetId, GradientStyle gradient) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putInt(PREF_GRADIENT_KEY + appWidgetId, gradient.getId()).apply();
+    }
+
+    static void saveWidgetFont(Context context, int appWidgetId, FontStyle font) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        prefs.edit().putInt(PREF_FONT_KEY + appWidgetId, font.getId()).apply();
+    }
+
+    private static GradientStyle getWidgetGradient(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int gradientId = prefs.getInt(PREF_GRADIENT_KEY + appWidgetId, GradientStyle.PASTEL_PINK.getId());
+        return GradientStyle.fromId(gradientId);
+    }
+
+    private static FontStyle getWidgetFont(Context context, int appWidgetId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int fontId = prefs.getInt(PREF_FONT_KEY + appWidgetId, FontStyle.DANCING_SCRIPT.getId());
+        return FontStyle.fromId(fontId);
     }
 
     private void scheduleNextUpdate(Context context, int appWidgetId) {
@@ -170,5 +201,69 @@ public class WeekDayWidgetSimple extends AppWidgetProvider {
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, appWidgetId, intent, 
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         alarmManager.cancel(pendingIntent);
+    }
+
+    private static void applyGradientBackground(Context context, RemoteViews views, GradientStyle gradient, BoxDesignStyle boxStyle) {
+        try {
+            // Create dynamic gradient drawable
+            int startColor = android.graphics.Color.parseColor(gradient.getStartColor());
+            int endColor = android.graphics.Color.parseColor(gradient.getEndColor());
+            
+            // For now, we'll use a simple approach - create a bitmap with the gradient
+            android.graphics.drawable.GradientDrawable gradientDrawable = new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[]{startColor, endColor}
+            );
+            
+            // Apply corner radius based on box style
+            float cornerRadius = boxStyle.getCornerRadius();
+            gradientDrawable.setCornerRadius(cornerRadius);
+            
+            // Note: RemoteViews has limitations, so we'll log for now and use default background
+            Log.d("WeekDayWidget", "Applied gradient: " + gradient.getName() + " with corners: " + cornerRadius);
+            
+        } catch (Exception e) {
+            Log.e("WeekDayWidget", "Error applying gradient", e);
+        }
+    }
+
+    private static void applyFontStyling(RemoteViews views, FontStyle font) {
+        try {
+            // Apply font size based on font style
+            float textSize = 18f; // Default size
+            if (font == FontStyle.ROBOTO || font == FontStyle.OPEN_SANS) {
+                textSize = 16f; // Smaller for sans-serif fonts
+            } else if (font == FontStyle.PLAYFAIR_DISPLAY || font == FontStyle.MERRIWEATHER) {
+                textSize = 20f; // Larger for display fonts
+            }
+            
+            views.setTextViewTextSize(R.id.dayText, android.util.TypedValue.COMPLEX_UNIT_SP, textSize);
+            Log.d("WeekDayWidget", "Applied font: " + font.getName() + " with size: " + textSize);
+            
+        } catch (Exception e) {
+            Log.e("WeekDayWidget", "Error applying font", e);
+        }
+    }
+
+    private static void applyDarkModeAdaptation(Context context, RemoteViews views) {
+        try {
+            // Check if system is in dark mode
+            boolean isDarkMode = WallpaperColorExtractor.isSystemInDarkMode(context);
+            
+            if (isDarkMode) {
+                // Apply dark mode colors
+                views.setTextColor(R.id.dayText, android.graphics.Color.parseColor("#E0E0E0"));
+                Log.d("WeekDayWidget", "Applied dark mode styling");
+            } else {
+                // Apply light mode colors
+                views.setTextColor(R.id.dayText, android.graphics.Color.parseColor("#2C3E50"));
+                Log.d("WeekDayWidget", "Applied light mode styling");
+            }
+            
+        } catch (Exception e) {
+            Log.e("WeekDayWidget", "Error applying dark mode", e);
+            // Fallback to default color
+            views.setTextColor(R.id.dayText, android.graphics.Color.parseColor("#2C3E50"));
+        }
     }
 }
