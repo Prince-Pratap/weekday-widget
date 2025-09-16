@@ -21,9 +21,11 @@ import java.util.Locale;
 public class WidgetConfigActivity extends AppCompatActivity {
     private int appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID;
     private ListView formatListView;
+    private ListView boxStyleListView;
     private Button saveButton;
     private Button cancelButton;
     private DateTimeFormat selectedFormat = DateTimeFormat.DAY_ONLY;
+    private BoxDesignStyle selectedBoxStyle = BoxDesignStyle.ROUNDED_CORNERS;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +50,13 @@ public class WidgetConfigActivity extends AppCompatActivity {
 
         initViews();
         setupFormatList();
+        setupBoxStyleList();
         setupButtons();
     }
 
     private void initViews() {
         formatListView = findViewById(R.id.formatListView);
+        boxStyleListView = findViewById(R.id.boxStyleListView);
         saveButton = findViewById(R.id.saveButton);
         cancelButton = findViewById(R.id.cancelButton);
     }
@@ -82,6 +86,29 @@ public class WidgetConfigActivity extends AppCompatActivity {
         
         // Select first item by default
         formatListView.setItemChecked(0, true);
+    }
+
+    private void setupBoxStyleList() {
+        List<String> boxStyleNames = new ArrayList<>();
+        
+        for (BoxDesignStyle style : BoxDesignStyle.values()) {
+            boxStyleNames.add(style.getName());
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, 
+            android.R.layout.simple_list_item_single_choice, boxStyleNames);
+        boxStyleListView.setAdapter(adapter);
+        boxStyleListView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        
+        boxStyleListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                selectedBoxStyle = BoxDesignStyle.values()[position];
+            }
+        });
+        
+        // Select first item by default
+        boxStyleListView.setItemChecked(0, true);
     }
 
     private void setupButtons() {
@@ -127,12 +154,13 @@ public class WidgetConfigActivity extends AppCompatActivity {
     }
 
     private void saveConfiguration() {
-        // Save the selected format
-        WeekDayWidget.saveWidgetFormat(this, appWidgetId, selectedFormat);
+        // Save the selected format and box style
+        WeekDayWidgetSimple.saveWidgetFormat(this, appWidgetId, selectedFormat);
+        WeekDayWidgetSimple.saveWidgetBoxStyle(this, appWidgetId, selectedBoxStyle);
 
         // Update the widget
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        WeekDayWidget.updateAppWidget(this, appWidgetManager, appWidgetId);
+        WeekDayWidgetSimple.updateAppWidget(this, appWidgetManager, appWidgetId);
 
         // Return success result
         Intent resultValue = new Intent();

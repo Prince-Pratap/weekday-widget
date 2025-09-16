@@ -17,7 +17,7 @@
         android:icon="@drawable/pastel_gradient">
         
         <!-- Widget Provider -->
-        <receiver android:name=".WeekDayWidget"
+        <receiver android:name=".WeekDayWidgetSimple"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -28,7 +28,7 @@
         </receiver>
         
         <!-- Configuration Activity -->
-        <activity android:name=".EnhancedWidgetConfigActivity"
+        <activity android:name=".WidgetConfigActivity"
             android:exported="true"
             android:theme="@style/Theme.AppCompat.Light">
             <intent-filter>

@@ -10,14 +10,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/select_format"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="#2C3E50"
         android:gravity="center"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="8dp"/>
 
     <ListView
         android:id="@+id/formatListView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:choiceMode="singleChoice"
+        android:divider="#E0E0E0"
+        android:dividerHeight="1dp"
+        android:background="@android:color/white"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Box Design Style"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="#2C3E50"
+        android:gravity="center"
+        android:layout_marginBottom="8dp"/>
+
+    <ListView
+        android:id="@+id/boxStyleListView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
