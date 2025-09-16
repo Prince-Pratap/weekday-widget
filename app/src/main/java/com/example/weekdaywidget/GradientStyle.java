@@ -12,7 +12,9 @@ public enum GradientStyle {
     LAVENDER_MIST(9, "Lavender Mist", "#E1BEE7", "#9C27B0", 270),
     ARCTIC_BLUE(10, "Arctic Blue", "#B3E5FC", "#03A9F4", 270),
     WARM_SUNSET(11, "Warm Sunset", "#FFAB91", "#FF7043", 45),
-    EMERALD_SHINE(12, "Emerald Shine", "#A5D6A7", "#66BB6A", 270);
+    EMERALD_SHINE(12, "Emerald Shine", "#A5D6A7", "#66BB6A", 270),
+    WALLPAPER_ADAPTIVE(13, "Wallpaper Adaptive", "#DYNAMIC", "#DYNAMIC", 270),
+    DARK_MODE_ADAPTIVE(14, "Dark Mode Adaptive", "#DYNAMIC", "#DYNAMIC", 270);
 
     private final int id;
     private final String name;
@@ -41,5 +43,9 @@ public enum GradientStyle {
             }
         }
         return PASTEL_PINK; // Default
+    }
+
+    public boolean isAdaptive() {
+        return this == WALLPAPER_ADAPTIVE || this == DARK_MODE_ADAPTIVE;
     }
 }

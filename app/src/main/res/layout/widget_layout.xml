@@ -1,12 +1,31 @@
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/widget_background"
+<!-- Adaptive background layer -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="12dp"
-    android:background="@drawable/pastel_gradient"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_height="match_parent">
+
+    <!-- Static gradient background -->
+    <RelativeLayout
+        android:id="@+id/widget_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/pastel_gradient"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Adaptive background (when wallpaper-based) -->
+    <ImageView
+        android:id="@+id/adaptive_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <!-- Content overlay with padding -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp">
 
     <!-- Custom font bitmap (when system font forcing is bypassed) -->
     <ImageView
@@ -34,4 +53,6 @@
         android:autoSizeMinTextSize="12sp"
         android:autoSizeMaxTextSize="24sp"
         android:visibility="gone" />
-</RelativeLayout>
+
+    </RelativeLayout>
+</FrameLayout>

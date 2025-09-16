@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Square Layout (200x200dp) - Centered text -->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Static gradient background -->
+    <RelativeLayout
+        android:id="@+id/widget_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/pastel_gradient"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Adaptive background (when wallpaper-based) -->
+    <ImageView
+        android:id="@+id/adaptive_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+
+    <!-- Content overlay with padding for square -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <!-- Custom font bitmap (centered text) -->
+        <ImageView
+            android:id="@+id/dayText"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:adjustViewBounds="true"
+            android:visibility="visible" />
+
+        <!-- Fallback text view (centered) -->
+        <TextView
+            android:id="@+id/dayTextFallback"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/default_day"
+            android:textColor="#2C3E50"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:fontFamily="@font/dancing_script"
+            android:textStyle="italic"
+            android:maxLines="4"
+            android:ellipsize="end"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMinTextSize="12sp"
+            android:autoSizeMaxTextSize="24sp"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+</FrameLayout>
